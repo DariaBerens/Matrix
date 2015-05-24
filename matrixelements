@@ -1,0 +1,190 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.IO;
+
+
+namespace Матрицы
+{
+    public partial class МатрицыЭлементы : Form
+    {
+
+        int _i1, _j1, _i2, _j2,_operat;
+        string[] w1;
+        int[,] matrix1;
+        int[,] matrix2;
+        public МатрицыЭлементы(int i1,int j1,int i2,int j2,int operat)
+        {
+            _operat = operat;
+            _i1 = i1;
+            _j1 = j1;
+            _i2 = i2;
+            _j2 = j2;
+
+            InitializeComponent();
+        }
+
+        private void МатрицыЭлементы_Load(object sender, EventArgs e)
+        {
+            
+            listView1.Size = new Size(_j1 * 55, 100);
+            listView2.Size = new Size(_j2 * 55, 100);
+            listView1.Location = new Point(50, 90);
+            listView2.Location = new Point(60 + _j1 * 60, 90);
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            w1 = (textBox1.Text).Split(' ');
+            GenerationMatrixs(w1);
+        }
+
+        public void GenerationMatrixs(string [] w)
+        {
+            int k = 0;
+            
+            matrix1 = new int[_i1, _j1];
+            matrix2 = new int[_i2, _j2];
+            for (int i = 0; i < _i1; i++)
+            {
+                for (int j = 0; j < _j1; j++)
+                {
+
+                    matrix1[i, j] = Convert.ToInt32(w[k]);
+                    listView1.Items.Add(w[k]);
+                    textBox1.Clear();
+                    k++;
+                }
+            }
+
+            for (int i = 0; i < _i2; i++)
+            {
+                for (int j = 0; j < _j2; j++)
+                {
+                    matrix2[i, j] = Int32.Parse(w1[k]);
+                    listView2.Items.Add(w[k]);
+                    textBox1.Clear();
+                    k++;
+                }
+            }
+        }
+        private void button2_Click(object sender, EventArgs e)
+        {
+            if (_operat==0)
+            { Результат Result = new Результат(GetSumm(matrix1,matrix2));
+            Result.Size = new Size(100+_j2 * 50, 200);
+             Result.Show();
+            }
+            if (_operat == 1)
+            {
+                Результат Result = new Результат(GetDif(matrix1, matrix2));
+                Result.Size = new Size(100 + _j2 * 50, 200);
+                Result.Show();
+            }
+            if (_operat == 2)
+            {
+                Результат Result = new Результат(GetMult(matrix1, matrix2));
+                Result.Size = new Size(100 + _j2 * 50, 200);
+                Result.Show();
+            }
+           
+        }
+
+         public static  int[,] GetSumm(int[,] A, int[,] B)
+        { 
+             if (A.GetLength(0) == 0 && A.GetLength(1) == 0)
+           {
+               throw new NullReferenceException();
+           }
+
+           int [,] _result = new int[A.GetLength(0),A.GetLength(1)];
+
+          
+        
+            for (int i = 0; i < A.GetLength(0); i++)
+            {
+                for (int j = 0; j < A.GetLength(1); j++)
+                {
+                    _result[i, j] = A[i, j]+B[i,j];  
+                }
+            } 
+            return _result;
+        }
+
+         public static int[,] GetDif(int[,] A, int[,] B)
+        {
+            if (A.GetLength(0) == 0 && A.GetLength(1) == 0)
+            {
+                throw new NullReferenceException();
+            }
+
+            int[,] _result = new int[A.GetLength(0),A.GetLength(1)];
+           
+            for (int i = 0; i < A.GetLength(0); i++)
+            {
+                for (int j = 0; j < A.GetLength(1); j++)
+                {
+                    _result[i, j] = A[i, j] - B[i, j];
+                 
+                }
+           
+            }
+         return _result;
+        }
+
+
+
+         public static int[,] GetMult(int[,] A, int[,] B)
+        {
+            if (A.GetLength(0) == 0 && B.GetLength(1) == 0)
+            {
+                throw new NullReferenceException();
+            }
+
+            int[,] _result = new int[A.GetLength(0),B.GetLength(1)];
+        
+            for (int i = 0; i < A.GetLength(0); i++)
+            {
+                for (int j = 0; j < B.GetLength(1); j++)
+                {
+                    for (int k = 0; k < A.GetLength(0); k++)
+                    {
+                        _result[i, j] += A[i, k] * B[k, j];
+                        
+                    }
+                   
+                }
+            }
+            return _result;
+        }
+
+         private void button3_Click(object sender, EventArgs e)
+         {
+             if(openFileDialog1.ShowDialog()==System.Windows.Forms.DialogResult.OK)
+             {
+                 w1=(File.ReadAllText(openFileDialog1.FileName)).Split(' ');
+                 GenerationMatrixs(w1);
+             }
+              
+         }
+
+         private void button4_Click(object sender, EventArgs e)
+         {
+             object[] o = w1;
+             string w = String.Join(" ", o);
+            
+             if(saveFileDialog1.ShowDialog()==System.Windows.Forms.DialogResult.OK)
+             {
+                 File.WriteAllText(saveFileDialog1.FileName,w);
+             }
+         }
+
+    }
+}
